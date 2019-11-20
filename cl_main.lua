@@ -17,7 +17,9 @@ _menuPool:WidthOffset(0)
 
 
 
-function menu(menu)
+function menu(menu, npc)
+    local ped = NetworkGetEntityFromNetworkId(npc)
+
 	local vendreWeed = NativeUI.CreateItem("Essayer de lui vendre de la weed", " ")
     menu:AddItem(vendreWeed)
 
@@ -42,7 +44,8 @@ Citizen.CreateThread(function()
         Citizen.Wait(0)
         _menuPool:ProcessMenus()
         if not _menuPool:IsAnyMenuOpen() then
-            ClearPedTasks(TargetNpc)
+            local ped = NetworkGetEntityFromNetworkId(TargetNpc)
+            ClearPedTasks(ped)
         end
     end
 end)
@@ -50,7 +53,7 @@ end)
 
 function OpenNpcMenu(npc)
     mainMenu:Clear()
-    menu(mainMenu)
+    menu(mainMenu, npc)
     Wait(100)
     mainMenu:Visible(not mainMenu:Visible())
     PlaySoundFrontend(-1, "Menu_Accept", "Phone_SoundSet_Default", 1)

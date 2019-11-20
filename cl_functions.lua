@@ -44,7 +44,8 @@ Citizen.CreateThread(function()
                     DrawMarker(32, coords.x, coords.y, coords.z+1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.3, 0.3, 0, 255, 0, 170, 0, 0, 2, 1, nil, nil, 0)
                     DrawText3D(coords.x, coords.y, coords.z, "Appuyer sur [~b~E~w~] pour parler avec la personne")
                     if IsControlJustReleased(1, 46) then
-                        OpenNpcMenu(ped)
+                        local PedNetId = NetworkGetNetworkIdFromEntity(ped)
+                        OpenNpcMenu(PedNetId)
                     end
                 end
             else
@@ -65,13 +66,6 @@ end
 
 
 
-
-
-
-
-
-
-
 function DrawText3D(x,y,z, text)
 	local onScreen,_x,_y=World3dToScreen2d(x,y,z)
 
@@ -88,3 +82,11 @@ function DrawText3D(x,y,z, text)
 		DrawRect(_x,_y+0.0125, 0.015+ factor, 0.03, 41, 11, 41, 68)
 	end
 end
+
+
+
+-- Vente 
+
+
+
+function VenteWeed(npc)
