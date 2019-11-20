@@ -13,13 +13,16 @@ Citizen.CreateThread(function()
     while true do
         local zone = GetZoneDevant()
         local ped = ESX.Game.GetClosestPed(zone, {})
+        local model = GetEntityModel(ped)
         if ped ~= GetPlayerPed(-1) and not IsPedAPlayer(ped) then
-            local coords = GetEntityCoords(ped, true)
-            local distance = ESX.Math.Round(GetDistanceBetweenCoords(GetEntityCoords(GetPlayerPed(-1), true), coords, true), 0)
-            if distance <= 10 then
-                NearestePed = ped
-            else
-                NearestePed = nil
+            if model ~= GetHashKey("s_f_y_cop_01") or model ~= GetHashKey("s_m_y_cop_01") then -- Blacklist model here, lazy to do a list
+                local coords = GetEntityCoords(ped, true)
+                local distance = ESX.Math.Round(GetDistanceBetweenCoords(GetEntityCoords(GetPlayerPed(-1), true), coords, true), 0)
+                if distance <= 10 then
+                    NearestePed = ped
+                else
+                    NearestePed = nil
+                end
             end
         end
         Citizen.Wait(2000)
@@ -111,7 +114,7 @@ function VenteWeed(npc)
         print("Oui")
         TaskPlayAnim(GetPlayerPed(-1), "mp_ped_interaction", "hugs_guy_a", 2.0, 2.0, -1, 0, 0, false, false, false)
         TaskPlayAnim(ped, "mp_ped_interaction", "hugs_guy_a", 2.0, 2.0, -1, 0, 0, false, false, false)
-        Wait(5000)
+        Wait(4500)
         FreezeEntityPosition(ped, false)
     else
 
