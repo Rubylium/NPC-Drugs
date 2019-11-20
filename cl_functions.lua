@@ -86,7 +86,35 @@ end
 
 
 -- Vente 
-
-
+  
 
 function VenteWeed(npc)
+    local ped = NetworkGetEntityFromNetworkId(npc)
+    FreezeEntityPosition(ped, true)
+    local random = math.random(1,10)
+
+    if random <= 8 then
+        local weedBuy = math.random(1,5)
+        local heading = GetEntityHeading(ped)
+        local coords = GetOffsetFromEntityInWorldCoords(ped, 0.0, 1.14, 0.0)
+
+        
+        SetEntityHeading(PlayerPedId(), heading - 180.1)
+        SetEntityCoordsNoOffset(PlayerPedId(), coords.x, coords.y, coords.z, 0)
+        Wait(300)
+        while not HasAnimDictLoaded("mp_ped_interaction") do
+            RequestAnimDict("mp_ped_interaction")
+            print("Non")
+            Citizen.Wait(1)
+        end
+        
+        print("Oui")
+        TaskPlayAnim(GetPlayerPed(-1), "mp_ped_interaction", "hugs_guy_a", 2.0, 2.0, -1, 0, 0, false, false, false)
+        TaskPlayAnim(ped, "mp_ped_interaction", "hugs_guy_a", 2.0, 2.0, -1, 0, 0, false, false, false)
+        Wait(5000)
+        FreezeEntityPosition(ped, false)
+    else
+
+    end
+
+end
