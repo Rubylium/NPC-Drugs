@@ -124,6 +124,7 @@ function VenteWeed(npc)
         Wait(4500)
         FreezeEntityPosition(ped, false)
     else
-        -- Faite le système de fuite ou appel police ( 10/10 )
+        NotificationNpc("Activité illégal", "~g~Vente de weed", "Ouai cimer je t'en prends ... Attends mais t'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
+        TaskCombatPed(ped, GetPlayerPed(-1), 0, 16)
     end
 end
