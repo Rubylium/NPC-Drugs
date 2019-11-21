@@ -33,7 +33,7 @@ Citizen.CreateThread(function()
                 end
             end
         end
-        Citizen.Wait(2000)
+        Citizen.Wait(1000)
     end
 end)
 
@@ -48,7 +48,7 @@ Citizen.CreateThread(function()
             local coords = GetEntityCoords(ped, true)
             local distance = ESX.Math.Round(GetDistanceBetweenCoords(GetEntityCoords(GetPlayerPed(-1), true), coords, true), 0)
             --print(distance)
-            if distance <= 10.0 then
+            if distance <= 5.0 then
                 if distance >= 3.0 then
                     DrawMarker(32, coords.x, coords.y, coords.z+1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.3, 0.3, 255, 0, 0, 170, 0, 0, 2, 1, nil, nil, 0)
                 else
@@ -115,11 +115,10 @@ function VenteWeed(npc)
         Wait(300)
         while not HasAnimDictLoaded("mp_ped_interaction") do
             RequestAnimDict("mp_ped_interaction")
-            print("Non")
             Citizen.Wait(1)
         end
         
-        print("Oui")
+        TriggerServerEvent("NPCVente:Weed", weedBuy)
         TaskPlayAnim(GetPlayerPed(-1), "mp_ped_interaction", "hugs_guy_a", 2.0, 2.0, -1, 0, 0, false, false, false)
         TaskPlayAnim(ped, "mp_ped_interaction", "hugs_guy_a", 2.0, 2.0, -1, 0, 0, false, false, false)
         Wait(4500)

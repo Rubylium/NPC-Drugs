@@ -5,3 +5,8 @@ client_scripts {
 	'cl_main.lua',
 	'cl_functions.lua'
 }
+
+
+server_scripts {
+	"srv_vente.lua"
+}

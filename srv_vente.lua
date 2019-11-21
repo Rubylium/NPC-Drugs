@@ -20,12 +20,13 @@ RegisterServerEvent("NPCVente:Weed")
 AddEventHandler("NPCVente:Weed", function(num)
     local xPlayer = ESX.GetPlayerFromId(source)
     local nombre = xPlayer.getInventoryItem("weed_pooch")
-    if nombre >= num then
-        TriggerClientEvent("NPCVente:Notification", source, "Activité illégal", "T'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
-    else
+    local count = 1
+    if nombre.count >= num then
         local PrixWeed = math.random(WeedMin,WeedMax)
         local PrixWeedFinal = num * PrixWeed
         xPlayer.removeInventoryItem("weed_pooch", num)
         TriggerClientEvent("NPCVente:Notification", source, "Activité illégal", "~g~Vente de weed", "Ouais je t'en prends ~g~"..num.."~w~\nArgent obtenu: ~g~"..PrixWeedFinal, "CHAR_LESTER", 8)
+    else
+        TriggerClientEvent("NPCVente:Notification", source, "Activité illégal", "~g~Vente de weed", "Ouai cimer je t'en prends ... Attends mais t'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
     end
 end)
