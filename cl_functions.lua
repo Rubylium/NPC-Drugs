@@ -5,6 +5,14 @@ function NotificationNpc(title, subject, msg, icon, iconType)
 	DrawNotification(false, false)
 end
 
+RegisterNetEvent("NPCVente:Notification")
+AddEventHandler("NPCVente:Notification", function(title, subject, msg, icon, iconType)
+	AddTextEntry('showAdNotification', msg)
+	SetNotificationTextEntry('showAdNotification')
+	SetNotificationMessage(icon, icon, false, iconType, title, subject)
+	DrawNotification(false, false)
+end)
+
 NearestePed = nil
 Citizen.CreateThread(function()
     while ESX == nil do
@@ -117,7 +125,6 @@ function VenteWeed(npc)
         Wait(4500)
         FreezeEntityPosition(ped, false)
     else
-
+        -- Faite le système de fuite ou appel police ( 10/10 )
     end
-
 end
