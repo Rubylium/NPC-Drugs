@@ -22,8 +22,8 @@ Citizen.CreateThread(function()
         local zone = GetZoneDevant()
         local ped = ESX.Game.GetClosestPed(zone, {})
         local model = GetEntityModel(ped)
-        if ped ~= GetPlayerPed(-1) and not IsPedAPlayer(ped) then
-            if model ~= GetHashKey("s_f_y_cop_01") or model ~= GetHashKey("s_m_y_cop_01") then -- Blacklist model here, lazy to do a list
+        if ped ~= GetPlayerPed(-1) and not IsPedAPlayer(ped) and not IsPedDeadOrDying(ped, 1) then
+            if model ~= GetHashKey("s_f_y_cop_01") and model ~= GetHashKey("s_m_y_cop_01") then -- Blacklist model here, lazy to do a list
                 local coords = GetEntityCoords(ped, true)
                 local distance = ESX.Math.Round(GetDistanceBetweenCoords(GetEntityCoords(GetPlayerPed(-1), true), coords, true), 0)
                 if distance <= 10 then
