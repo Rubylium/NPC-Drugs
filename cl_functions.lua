@@ -134,8 +134,11 @@ function VenteWeed(npc)
         table.insert(DejaVenduPed, NetId)
         NearestePed = nil
     else
-        NotificationNpc("Activité illégal", "~g~Vente de weed", "Ouai cimer je t'en prends ... Attends mais t'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
+        NotificationNpc("Activité illégal", "~g~Vente de weed", "Ouai ouai ... Nan je suis pas dans ça moi laisse moi !", "CHAR_LESTER", 8)
         TaskCombatPed(ped, GetPlayerPed(-1), 0, 16)
+
+        local coords = GetEntityCoords(GetPlayerPed(-1), true)
+        TriggerServerEvent("NPCVente:AppelLSPD", coords)
     end
 end
 
@@ -170,7 +173,41 @@ function VenteCoke(npc)
         table.insert(DejaVenduPed, NetId)
         NearestePed = nil
     else
-        NotificationNpc("Activité illégal", "~g~Vente de coke", "Ouai cimer je t'en prends ... Attends mais t'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
+        NotificationNpc("Activité illégal", "~g~Vente de coke", "Ouai ouai ... Nan je suis pas dans ça moi laisse moi !", "CHAR_LESTER", 8)
         TaskCombatPed(ped, GetPlayerPed(-1), 0, 16)
+        local coords = GetEntityCoords(GetPlayerPed(-1), true)
+        TriggerServerEvent("NPCVente:AppelLSPD", coords)
     end
 end
+
+
+
+
+-- Appel LSPD
+
+
+RegisterNetEvent("NPCVente:AffichageAppel")
+AddEventHandler("NPCVente:AffichageAppel", function(coords)
+    PlaySoundFrontend(-1, "Start_Squelch", "CB_RADIO_SFX", 1)
+    PlaySoundFrontend(-1, "OOB_Start", "GTAO_FM_Events_Soundset", 1)
+    PlaySoundFrontend(-1, "FocusIn", "HintCamSounds", 1)
+    NotificationNpc("LSPD CENTRAL", "~g~Appel d'un citoyen", "Central: Bonjour, quels est votre problème ?\nCitoyen: Quelqu'un à essayer de me vendre des stupéfiant !\nCentral: Très bien, rester calme une équipe est en route.", "CHAR_LESTER", 8)
+
+    local blip = AddBlipForCoord(coords)
+    SetBlipSprite(blip, 51)
+    SetBlipScale(blip, 0.85)
+    SetBlipColour(blip, 47)
+
+    local BlipZone = AddBlipForRadius(coords, 15.0)
+    SetBlipColour(blipZone, 75)
+    SetBlipAlpha(blipZone, 150)
+
+
+    Wait(1000)
+    PlaySoundFrontend(-1, "End_Squelch", "CB_RADIO_SFX", 1)
+    PlaySoundFrontend(-1, "FocusOut", "HintCamSounds", 1)
+
+    Citizen.Wait(60*1000)
+    RemoveBlip(blip)
+    RemoveBlip(blipZone)
+end)

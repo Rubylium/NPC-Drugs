@@ -53,3 +53,20 @@ AddEventHandler("NPCVente:coke", function(num)
         TriggerClientEvent("NPCVente:Notification", source, "Activité illégal", "~g~Vente de coke", "Ouai cimer je t'en prends ... Attends mais t'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
     end
 end)
+
+
+
+-- Appel LSPD 
+
+
+
+RegisterServerEvent("NPCVente:AppelLSPD")
+AddEventHandler("NPCVente:AppelLSPD", function(coords)
+    local xPlayers	= ESX.GetPlayers()
+    for i=1, #xPlayers, 1 do
+        local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
+        if xPlayer.job.name == 'police' then
+            TriggerClientEvent('NPCVente:AffichageAppel', xPlayers[i], coords)
+        end
+    end
+end)
