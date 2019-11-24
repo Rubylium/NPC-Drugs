@@ -22,10 +22,15 @@ function menu(menu, npc)
 
 	local vendreWeed = NativeUI.CreateItem("Essayer de lui vendre de la weed", "")
     menu:AddItem(vendreWeed)
+    local vendreCoke = NativeUI.CreateItem("Essayer de lui vendre de la coke", "")
+    menu:AddItem(vendreCoke)
 
 	menu.OnItemSelect = function(sender, item, index)
 		if item == vendreWeed then
             VenteWeed(npc)
+            _menuPool:CloseAllMenus()
+        elseif item == vendreCoke then
+            VenteCoke(npc)
             _menuPool:CloseAllMenus()
 		end
 	end

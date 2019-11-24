@@ -14,6 +14,7 @@ AddEventHandler("NPCVente:Notification", function(title, subject, msg, icon, ico
 end)
 
 NearestePed = nil
+local DejaVenduPed = {}
 Citizen.CreateThread(function()
     while ESX == nil do
         Wait(100)
@@ -23,11 +24,18 @@ Citizen.CreateThread(function()
         local ped = ESX.Game.GetClosestPed(zone, {})
         local model = GetEntityModel(ped)
         if ped ~= GetPlayerPed(-1) and not IsPedAPlayer(ped) and not IsPedDeadOrDying(ped, 1) then
-            if model ~= GetHashKey("s_f_y_cop_01") and model ~= GetHashKey("s_m_y_cop_01") then -- Blacklist model here, lazy to do a list
+            if model ~= GetHashKey("s_f_y_cop_01") and model ~= GetHashKey("s_m_y_cop_01") then -- Blacklist des modèles ici, flème de faire une liste
                 local coords = GetEntityCoords(ped, true)
                 local distance = ESX.Math.Round(GetDistanceBetweenCoords(GetEntityCoords(GetPlayerPed(-1), true), coords, true), 0)
                 if distance <= 10 then
-                    NearestePed = ped
+                    for k,v in ipairs(DejaVenduPed) do
+                        local NetPed = NetworkGetEntityFromNetworkId(v)
+                        if NetPed ~= ped then 
+                            NearestePed = ped
+                        else
+                            NearestePed = nil
+                        end
+                    end
                 else
                     NearestePed = nil
                 end
@@ -69,9 +77,7 @@ end)
 
 
 function GetZoneDevant()
-	--local coords = GetEntityCoords(GetPlayerPed(-1), true)
     local backwardPosition = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), 0.0, 2.0, 0.0)
-    --print(backwardPosition)
 	return backwardPosition
 end
 
@@ -123,8 +129,48 @@ function VenteWeed(npc)
         TaskPlayAnim(ped, "mp_ped_interaction", "hugs_guy_a", 2.0, 2.0, -1, 0, 0, false, false, false)
         Wait(4500)
         FreezeEntityPosition(ped, false)
+    
+        local NetId = NetworkGetNetworkIdFromEntity(ped)
+        table.insert(DejaVenduPed, NetId)
+        NearestePed = nil
     else
         NotificationNpc("Activité illégal", "~g~Vente de weed", "Ouai cimer je t'en prends ... Attends mais t'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
+        TaskCombatPed(ped, GetPlayerPed(-1), 0, 16)
+    end
+end
+
+
+
+function VenteCoke(npc)
+    local ped = NetworkGetEntityFromNetworkId(npc)
+    FreezeEntityPosition(ped, true)
+    local random = math.random(1,10)
+
+    if random <= 8 then
+        local cokeBuy = math.random(1,5)
+        local heading = GetEntityHeading(ped)
+        local coords = GetOffsetFromEntityInWorldCoords(ped, 0.0, 1.14, 0.0)
+
+        
+        SetEntityHeading(PlayerPedId(), heading - 180.1)
+        SetEntityCoordsNoOffset(PlayerPedId(), coords.x, coords.y, coords.z, 0)
+        Wait(300)
+        while not HasAnimDictLoaded("mp_ped_interaction") do
+            RequestAnimDict("mp_ped_interaction")
+            Citizen.Wait(1)
+        end
+        
+        TriggerServerEvent("NPCVente:coke", cokeBuy)
+        TaskPlayAnim(GetPlayerPed(-1), "mp_ped_interaction", "hugs_guy_a", 2.0, 2.0, -1, 0, 0, false, false, false)
+        TaskPlayAnim(ped, "mp_ped_interaction", "hugs_guy_a", 2.0, 2.0, -1, 0, 0, false, false, false)
+        Wait(4500)
+        FreezeEntityPosition(ped, false)
+
+        local NetId = NetworkGetNetworkIdFromEntity(ped)
+        table.insert(DejaVenduPed, NetId)
+        NearestePed = nil
+    else
+        NotificationNpc("Activité illégal", "~g~Vente de coke", "Ouai cimer je t'en prends ... Attends mais t'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
         TaskCombatPed(ped, GetPlayerPed(-1), 0, 16)
     end
 end

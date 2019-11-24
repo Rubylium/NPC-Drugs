@@ -30,3 +30,26 @@ AddEventHandler("NPCVente:Weed", function(num)
         TriggerClientEvent("NPCVente:Notification", source, "Activité illégal", "~g~Vente de weed", "Ouai cimer je t'en prends ... Attends mais t'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
     end
 end)
+
+
+
+-- Prix vente coke NPC
+local cokeMin = 20
+local cokeMax = 30
+
+
+-- Vente coke
+RegisterServerEvent("NPCVente:coke")
+AddEventHandler("NPCVente:coke", function(num)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local nombre = xPlayer.getInventoryItem("coke_pooch")
+    local count = 1
+    if nombre.count >= num then
+        local Prixcoke = math.random(cokeMin,cokeMax)
+        local PrixcokeFinal = num * Prixcoke
+        xPlayer.removeInventoryItem("coke_pooch", num)
+        TriggerClientEvent("NPCVente:Notification", source, "Activité illégal", "~g~Vente de coke", "Ouais je t'en prends ~g~"..num.."~w~\nArgent obtenu: ~g~"..PrixcokeFinal, "CHAR_LESTER", 8)
+    else
+        TriggerClientEvent("NPCVente:Notification", source, "Activité illégal", "~g~Vente de coke", "Ouai cimer je t'en prends ... Attends mais t'essaye de me vendre quoi la ? Ta rien frère ? Casse toi !", "CHAR_LESTER", 8)
+    end
+end)
