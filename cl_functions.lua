@@ -28,14 +28,7 @@ Citizen.CreateThread(function()
                 local coords = GetEntityCoords(ped, true)
                 local distance = ESX.Math.Round(GetDistanceBetweenCoords(GetEntityCoords(GetPlayerPed(-1), true), coords, true), 0)
                 if distance <= 10 then
-                    for k,v in ipairs(DejaVenduPed) do
-                        local NetPed = NetworkGetEntityFromNetworkId(v)
-                        if NetPed ~= ped then 
-                            NearestePed = ped
-                        else
-                            NearestePed = nil
-                        end
-                    end
+                    NearestePed = ped
                 else
                     NearestePed = nil
                 end
@@ -45,12 +38,36 @@ Citizen.CreateThread(function()
     end
 end)
 
+Citizen.CreateThread(function()
+    while true do
+        local count = 0
+        local attente = 3000
+        for k,v in ipairs(DejaVenduPed) do
+            local NetPed = NetworkGetEntityFromNetworkId(v)
+            if DoesEntityExist(NetPed) then 
+                count = count + 1
+                attente = 1000
+            end
+        end
+        if count == 0 then
+            DejaVenduPed = {}
+            attente = 10000
+        end  
+        Citizen.Wait(attente)
+    end
+end)
 
 Citizen.CreateThread(function()
     while ESX == nil do
         Wait(100)
     end
     while true do
+        for k,v in ipairs(DejaVenduPed) do
+            local NetPed = NetworkGetEntityFromNetworkId(v)
+            if NetPed == NearestePed then 
+                NearestePed = nil
+            end
+        end
         if NearestePed ~= nil then
             local ped = NearestePed
             local coords = GetEntityCoords(ped, true)
@@ -134,11 +151,16 @@ function VenteWeed(npc)
         table.insert(DejaVenduPed, NetId)
         NearestePed = nil
     else
+        FreezeEntityPosition(ped, false)
         NotificationNpc("Activité illégal", "~g~Vente de weed", "Ouai ouai ... Nan je suis pas dans ça moi laisse moi !", "CHAR_LESTER", 8)
         TaskCombatPed(ped, GetPlayerPed(-1), 0, 16)
 
         local coords = GetEntityCoords(GetPlayerPed(-1), true)
         TriggerServerEvent("NPCVente:AppelLSPD", coords)
+
+        local NetId = NetworkGetNetworkIdFromEntity(ped)
+        table.insert(DejaVenduPed, NetId)
+        NearestePed = nil
     end
 end
 
@@ -173,10 +195,15 @@ function VenteCoke(npc)
         table.insert(DejaVenduPed, NetId)
         NearestePed = nil
     else
+        FreezeEntityPosition(ped, false)
         NotificationNpc("Activité illégal", "~g~Vente de coke", "Ouai ouai ... Nan je suis pas dans ça moi laisse moi !", "CHAR_LESTER", 8)
         TaskCombatPed(ped, GetPlayerPed(-1), 0, 16)
         local coords = GetEntityCoords(GetPlayerPed(-1), true)
         TriggerServerEvent("NPCVente:AppelLSPD", coords)
+
+        local NetId = NetworkGetNetworkIdFromEntity(ped)
+        table.insert(DejaVenduPed, NetId)
+        NearestePed = nil
     end
 end
 
@@ -191,16 +218,17 @@ AddEventHandler("NPCVente:AffichageAppel", function(coords)
     PlaySoundFrontend(-1, "Start_Squelch", "CB_RADIO_SFX", 1)
     PlaySoundFrontend(-1, "OOB_Start", "GTAO_FM_Events_Soundset", 1)
     PlaySoundFrontend(-1, "FocusIn", "HintCamSounds", 1)
-    NotificationNpc("LSPD CENTRAL", "~g~Appel d'un citoyen", "Central: Bonjour, quels est votre problème ?\nCitoyen: Quelqu'un à essayer de me vendre des stupéfiant !\nCentral: Très bien, rester calme une équipe est en route.", "CHAR_LESTER", 8)
+    NotificationNpc("LSPD CENTRAL", "~g~Appel d'un citoyen", "~g~Central:~w~ Bonjour, quels est votre problème ?\n~g~Citoyen~w~: Quelqu'un à essayer de me vendre des stupéfiants !\n~g~Central:~w~ Très bien, rester calme une équipe est en route.", "CHAR_CHAT_CALL", 8)
 
     local blip = AddBlipForCoord(coords)
     SetBlipSprite(blip, 51)
     SetBlipScale(blip, 0.85)
     SetBlipColour(blip, 47)
 
-    local BlipZone = AddBlipForRadius(coords, 15.0)
-    SetBlipColour(blipZone, 75)
-    SetBlipAlpha(blipZone, 150)
+    local BlipZone = AddBlipForCoord(coords)
+    SetBlipSprite(BlipZone, 10)
+    SetBlipScale(blipZone, 3.0)
+    SetBlipColour(blipZone, 1)
 
 
     Wait(1000)
